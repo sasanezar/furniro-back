@@ -33,11 +33,23 @@ notificationSchema.index({ userId: 1, read: 1 });
 notificationSchema.pre("save", async function (next) {
   if (this.isNew) {
     try {
-      const counter = await Counter.findOneAndUpdate(
+      const maxNotif = await this.constructor.findOne().sort("-notificationId");
+      const maxId = maxNotif && maxNotif.notificationId ? maxNotif.notificationId : 0;
+
+      let counter = await Counter.findOneAndUpdate(
         { name: "notificationId" },
         { $inc: { value: 1 } },
         { new: true, upsert: true }
       );
+
+      if (counter.value <= maxId) {
+        counter = await Counter.findOneAndUpdate(
+          { name: "notificationId" },
+          { $set: { value: maxId + 1 } },
+          { new: true }
+        );
+      }
+
       this.notificationId = counter.value;
     } catch (error) {
       return next(error);

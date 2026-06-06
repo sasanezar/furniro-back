@@ -350,8 +350,8 @@ exports.updateUserCart = async (req, res) => {
       { new: true, upsert: true }
     );
 
-    if (!user.cart || user.cart.toString() !== updatedCart._id.toString()) {
-      user.cart = updatedCart._id;
+    if (!user.cart || user.cart.toString() !== updatedCart.id.toString()) {
+      user.cart = updatedCart.id;
       await user.save();
     }
 

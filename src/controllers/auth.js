@@ -345,7 +345,7 @@ exports.updateUserCart = async (req, res) => {
     if (!user) return res.status(404).json({ msg: "User not found" });
 
     const updatedCart = await Cart.findOneAndUpdate(
-      { userId: user._id },
+      { userId: user.id },
       { $set: { items: cart } },
       { new: true, upsert: true }
     );

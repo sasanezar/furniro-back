@@ -346,12 +346,12 @@ exports.updateUserCart = async (req, res) => {
 
     const updatedCart = await Cart.findOneAndUpdate(
       { userId: user.id },
-      { $set: { items: cart } },
+      { $set: { items: cart, userRef: user._id } },
       { new: true, upsert: true }
     );
 
-    if (!user.cart || user.cart.toString() !== updatedCart.id.toString()) {
-      user.cart = updatedCart.id;
+    if (!user.cart || user.cart.toString() !== updatedCart._id.toString()) {
+      user.cart = updatedCart._id;
       await user.save();
     }
 
